@@ -1,4 +1,4 @@
-/*version 0.2
+/*version 0.3
   Autor: Jose Doyague
   Lunes 27 de febrero
  */
@@ -18,11 +18,12 @@ typedef struct sensores{
 
 typedef struct nodo {
   sensores datos;
-  struct *p; // apunta  una estructura del mismo tipo que nodo
+  struct nodo *p; // apunta  una estructura del mismo tipo que nodo
 }nodo;
-/*--------Declaracion----de----funciones-----de-------la------lista------*/
+/*--------Declaracion----de----funciones-----de-------la------lista------*/                            
 void listar(nodo *ptrCabecera);
 void visualiza(sensores variable);
+void mostrar_lista(nodo ptrCabecera);
 nodo * inserta_final(nodo *nuevoNodo, nodo *ptrFinal);// funcion tipo nodo
 /*-------MAIN-----------*/
  int main(int argc, char const *argv[]) {
@@ -36,13 +37,14 @@ nodo * inserta_final(nodo *nuevoNodo, nodo *ptrFinal);// funcion tipo nodo
  fichero = fopen("datos_meteorologicos.text", "r");// en la misma carpeta que el main
 /* tempuratura humedad presion lluvia \n*/
 /*-------------LECTURA---DE----DATOS--------------------------*/
-     fscanf("%d %d %d %f %f %f  %f",  variable.dia,variable.mes,variable.year,variable.temp,variable.humd,variable.pres,variable.lluv);
+     while(!feof(fichero)){
+       fscanf("%d %d %d %f %f %f %f", &variable.dia, &variable.mes, &variable.year, &variable.temp, &variable.humd, &variable.pres, &variable.lluv);// No funciona
 /*---------------------INICIO----LISTA---------------------*/
       if(!feof(fichero)){
        nodo *nuevoNodo;
        nuevoNodo = (nodo *)malloc(sizeof(nodo));//reservamos espacio para el nuevo nodo
        nuevoNodo->datos = variable;// guardamos la estructura en el nodo 
-       nuevoNodo->p=NULL; // el puntero que apunta al siguiente nodo lo ponemos a null
+       nuevoNodo->p = NULL; // el puntero que apunta al siguiente nodo lo ponemos a null
        if (ptrCabecera == NULL){//si no hay mas nodos lo metemos detras detras de la cabecera
            ptrCabecera = nuevoNodo;
        }
@@ -50,13 +52,14 @@ nodo * inserta_final(nodo *nuevoNodo, nodo *ptrFinal);// funcion tipo nodo
      }
 /*----------FIN----LISTA---------*/
   fclose(fichero);// cerramos el fichero                             
-  mostrar_lista(ptrCabecera);
+  mostrar_lista(*ptrCabecera);
   return 0;
   }
+ }
 
 /*-----Defeinicion----de----funciones-----de-------la------lista------*/
 nodo* inserta_final(nodo *nuevoNodo, nodo *ptrFinal){//inserta al final
-  if(ptrFinal==NULL){
+  if(ptrFinal == NULL){                                       
     return nuevoNodo;
   }
   else{
@@ -65,12 +68,12 @@ nodo* inserta_final(nodo *nuevoNodo, nodo *ptrFinal){//inserta al final
   }
 }
 void mostrar_lista(nodo *ptrCabecera){//muestra la lista
-    if(ptrCabecera==NULL){// excepcion
+    if(ptrCabecera == NULL){// excepcion
         printf("\n/*********************/\n\nFichero de datos vacio\n\n/*********************/ \n");
     }
     else{
-        nodo *ptrSiguiente=ptrCabecera;// pedir explicacion
-        while(ptrSiguiente!=NULL){
+        nodo *ptrSiguiente = ptrCabecera;// pedir explicacion
+        while(ptrSiguiente != NULL){
             visualiza(ptrSiguiente->datos);
             ptrSiguiente = ptrSiguiente->p;
         }
