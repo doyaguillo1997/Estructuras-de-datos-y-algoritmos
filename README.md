@@ -1,2 +1,2 @@
 # Estructuras-de-datos-y-algoritmos
-luisete no me copies el proyecto
+El programa funciona pero le he metido unos fallitos para que te entretengas luisete ;)
