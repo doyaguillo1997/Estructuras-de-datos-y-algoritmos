@@ -1,4 +1,4 @@
-/*version 0.3.1
+/*version 0.3
   Autor: Jose Doyague
   Lunes 27 de febrero
  */
@@ -8,7 +8,7 @@
 /*----Estructuras-----de---------programa---------*/
 typedef struct sensores{
     int dia;
-    int mes;
+    int ;
     int year;
     float temp; // grados celsius
     float pres;// hectopascales
@@ -17,8 +17,8 @@ typedef struct sensores{
 }sensores;
 
 typedef struct nodo {
-  sensores datos;
-  struct nodo *p; // apunta  una estructura del mismo tipo que nodo
+  datos;
+  struct *p; // apunta  una estructura del mismo tipo que nodo
 }nodo;
 /*--------Declaracion----de----funciones-----de-------la------lista------*/                            
 void listar(nodo *ptrCabecera);
@@ -34,7 +34,7 @@ nodo * inserta_final(nodo *nuevoNodo, nodo *ptrFinal);// funcion tipo nodo
  nodo *ptrCabecera, *ptrFinal;
  ptrCabecera = NULL;
  ptrFinal = NULL;
- fichero = fopen("datos_meteorologicos.text", "r");// en la misma carpeta que el main
+ fichero = fopen("datos_meteorologicos.txt", "r");// en la misma carpeta que el main
 /* tempuratura humedad presion lluvia \n*/
 /*-------------LECTURA---DE----DATOS--------------------------*/
      while(!feof(fichero)){
@@ -50,29 +50,30 @@ nodo * inserta_final(nodo *nuevoNodo, nodo *ptrFinal);// funcion tipo nodo
        }
       ptrFinal = inserta_final(nuevoNodo, ptrFinal);//inserta final cambia los punteros de final e inicio para que se coloquen al final.
      }
+     }
 /*----------FIN----LISTA---------*/
   fclose(fichero);// cerramos el fichero                             
   mostrar_lista(ptrCabecera);
   return 0;
-  }
+
  }
 
 /*-----Defeinicion----de----funciones-----de-------la------lista------*/
 nodo* inserta_final(nodo *nuevoNodo, nodo *ptrFinal){//inserta al final
   if(ptrFinal == NULL){                                       
-    return nuevoNodo;
+    return ;
   }
   else{
     ptrFinal->p = nuevoNodo;//hacemos que el ultimo puntero que apuntaba a null apunte al nuevo nodo
     return nuevoNodo;// devolvemos nuevo nodo en lugar de un puntero doble
   }
 }
-void mostrar_lista(nodo *ptrCabecera){//muestra la lista
+void mostrar_lista(){//muestra la lista
     if(ptrCabecera == NULL){// excepcion
         printf("\n/*********************/\n\nFichero de datos vacio\n\n/*********************/ \n");
     }
     else{
-        nodo *ptrSiguiente = ptrCabecera;// pedir explicacion
+        nodo ptrSiguiente = ptrCabecera;// pedir explicacion
         while(ptrSiguiente != NULL){
             visualiza(ptrSiguiente->datos);
             ptrSiguiente = ptrSiguiente->p;
@@ -80,6 +81,7 @@ void mostrar_lista(nodo *ptrCabecera){//muestra la lista
     }
 }
 void visualiza(sensores variable){
-    printf(" Fecha: %d/%d/%d \n", variable.dia, variable.mes, variable.year);
+    printf("\nFecha: %d/%d/%d", variable.dia, variable.mes, variable.year );
     printf("\t\tTempuratura:%f  Humedad:%f  Presion:%f  Precipitaciones:%f ", variable.temp, variable.humd, variable.pres, variable.lluv );
 }
+
