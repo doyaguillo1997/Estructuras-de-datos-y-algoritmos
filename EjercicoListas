@@ -38,7 +38,7 @@ nodo * inserta_final(nodo *nuevoNodo, nodo *ptrFinal);// funcion tipo nodo
 /* tempuratura humedad presion lluvia \n*/
 /*-------------LECTURA---DE----DATOS--------------------------*/
      while(!feof(fichero)){
-       fscanf(fichero, "%d %d %d %f %f %f %f", &(variable.dia), &(variable.mes), &(variable.year), &(variable.temp), &(variable.humd), &(variable.pres), &(variable.lluv));// No funciona
+       fscanf(fichero, "%d %d %d %f %f %f %f", &(variable.dia), &(variable.mes), &(variable.year), &(variable.temp), &(variable.humd), &(variable.pres), &(variable.lluv));
 /*---------------------INICIO----LISTA---------------------*/
       if(!feof(fichero)){
        nodo *nuevoNodo;
