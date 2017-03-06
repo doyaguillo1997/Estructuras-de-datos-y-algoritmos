@@ -1,4 +1,4 @@
-/*version 0.3
+/*version 0.3.1
   Autor: Jose Doyague
   Lunes 27 de febrero
  */
@@ -23,7 +23,7 @@ typedef struct nodo {
 /*--------Declaracion----de----funciones-----de-------la------lista------*/                            
 void listar(nodo *ptrCabecera);
 void visualiza(sensores variable);
-void mostrar_lista(nodo ptrCabecera);
+void mostrar_lista(nodo *ptrCabecera);
 nodo * inserta_final(nodo *nuevoNodo, nodo *ptrFinal);// funcion tipo nodo
 /*-------MAIN-----------*/
  int main(int argc, char const *argv[]) {
@@ -38,7 +38,7 @@ nodo * inserta_final(nodo *nuevoNodo, nodo *ptrFinal);// funcion tipo nodo
 /* tempuratura humedad presion lluvia \n*/
 /*-------------LECTURA---DE----DATOS--------------------------*/
      while(!feof(fichero)){
-       fscanf("%d %d %d %f %f %f %f", &variable.dia, &variable.mes, &variable.year, &variable.temp, &variable.humd, &variable.pres, &variable.lluv);// No funciona
+       fscanf(fichero, "%d %d %d %f %f %f %f", &(variable.dia), &(variable.mes), &(variable.year), &(variable.temp), &(variable.humd), &(variable.pres), &(variable.lluv));// No funciona
 /*---------------------INICIO----LISTA---------------------*/
       if(!feof(fichero)){
        nodo *nuevoNodo;
@@ -52,7 +52,7 @@ nodo * inserta_final(nodo *nuevoNodo, nodo *ptrFinal);// funcion tipo nodo
      }
 /*----------FIN----LISTA---------*/
   fclose(fichero);// cerramos el fichero                             
-  mostrar_lista(*ptrCabecera);
+  mostrar_lista(ptrCabecera);
   return 0;
   }
  }
