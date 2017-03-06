@@ -1,14 +1,16 @@
-/*version 0.3
+/*version 1.01
   Autor: Jose Doyague
-  Lunes 27 de febrero
+  Sábado 4 de febrero
  */
+ /*Programa que carga en una pila los datos de una estacion meteorologica despues los imprime por pantalla */
+ 
 #include <ctype.h>// para toascii
 #include <stdlib.h>// para malloc
 #include <stdio.h>
 /*----Estructuras-----de---------programa---------*/
 typedef struct sensores{
     int dia;
-    int ;
+    int mes;
     int year;
     float temp; // grados celsius
     float pres;// hectopascales
@@ -17,17 +19,16 @@ typedef struct sensores{
 }sensores;
 
 typedef struct nodo {
-  datos;
-  struct *p; // apunta  una estructura del mismo tipo que nodo
+  sensores datos;
+  struct nodo *p; // apunta  una estructura del mismo tipo que nodo
 }nodo;
 /*--------Declaracion----de----funciones-----de-------la------lista------*/                            
-void listar(nodo *ptrCabecera);
-void visualiza(sensores variable);
-void mostrar_lista(nodo *ptrCabecera);
-nodo * inserta_final(nodo *nuevoNodo, nodo *ptrFinal);// funcion tipo nodo
+void visualiza_71972128E(sensores variable);
+void mostrar_lista_71972128E(nodo *ptrCabecera);
+nodo * inserta_final_71972128E(nodo *nuevoNodo, nodo *ptrFinal);// funcion tipo nodo
 /*-------MAIN-----------*/
  int main(int argc, char const *argv[]) {
- //leemos datos de un fichero y los metemos en una lista
+ //leemos datos de un fichero y los metemos en una listaº
  //la lista es simplemente enlazada
  FILE *fichero;
  sensores variable;/*parametros*/
@@ -48,40 +49,39 @@ nodo * inserta_final(nodo *nuevoNodo, nodo *ptrFinal);// funcion tipo nodo
        if (ptrCabecera == NULL){//si no hay mas nodos lo metemos detras detras de la cabecera
            ptrCabecera = nuevoNodo;
        }
-      ptrFinal = inserta_final(nuevoNodo, ptrFinal);//inserta final cambia los punteros de final e inicio para que se coloquen al final.
+      ptrFinal = inserta_final_71972128E(nuevoNodo, ptrFinal);//inserta final cambia los punteros de final e inicio para que se coloquen al final.
      }
      }
 /*----------FIN----LISTA---------*/
   fclose(fichero);// cerramos el fichero                             
-  mostrar_lista(ptrCabecera);
+  mostrar_lista_71972128E(ptrCabecera);
   return 0;
 
  }
 
 /*-----Defeinicion----de----funciones-----de-------la------lista------*/
-nodo* inserta_final(nodo *nuevoNodo, nodo *ptrFinal){//inserta al final
+nodo* inserta_final_71972128E(nodo *nuevoNodo, nodo *ptrFinal){//inserta al final
   if(ptrFinal == NULL){                                       
-    return ;
+    return nuevoNodo;
   }
   else{
     ptrFinal->p = nuevoNodo;//hacemos que el ultimo puntero que apuntaba a null apunte al nuevo nodo
     return nuevoNodo;// devolvemos nuevo nodo en lugar de un puntero doble
   }
 }
-void mostrar_lista(){//muestra la lista
+void mostrar_lista_71972128E(nodo *ptrCabecera){//muestra la lista
     if(ptrCabecera == NULL){// excepcion
-        printf("\n/*********************/\n\nFichero de datos vacio\n\n/*********************/ \n");
+        printf("\n========================\n Fichero de datos vacio\n========================\n");
     }
     else{
-        nodo ptrSiguiente = ptrCabecera;// pedir explicacion
+        nodo *ptrSiguiente = ptrCabecera;
         while(ptrSiguiente != NULL){
-            visualiza(ptrSiguiente->datos);
+            visualiza_71972128E(ptrSiguiente->datos);
             ptrSiguiente = ptrSiguiente->p;
         }
     }
 }
-void visualiza(sensores variable){
-    printf("\nFecha: %d/%d/%d", variable.dia, variable.mes, variable.year );
-    printf("\t\tTempuratura:%f  Humedad:%f  Presion:%f  Precipitaciones:%f ", variable.temp, variable.humd, variable.pres, variable.lluv );
+void visualiza_71972128E(sensores variable){
+    printf("\nFecha: %d/%d/%d:", variable.dia, variable.mes, variable.year );
+    printf("\n\t\tTempuratura:%f  Humedad:%f  Presion:%f  Precipitaciones:%f ", variable.temp, variable.humd, variable.pres, variable.lluv );
 }
-
