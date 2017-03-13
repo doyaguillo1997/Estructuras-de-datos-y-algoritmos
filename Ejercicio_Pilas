@@ -1,0 +1,267 @@
+* 
+ * File:   main.cpp
+ * Author: Luis Burgos
+ *
+ * Created on 13 de Marzo de 2017
+ * 
+ * Content: Ejercicio de Pila implementada mediante lista enlazada
+ */
+
+#include <stdio.h>
+#include <ctype.h> //para toascii
+#include <stdlib.h>
+ //para malloc
+
+#define TAMPILA 10
+#define TAMCUENTA 10
+#define TAMFECHA 8
+#define TAMMENSAJE 140
+
+struct tweet{
+    char *cuenta;
+    char *fecha;
+    char *mensaje;
+};
+
+typedef struct tweet dato;
+
+struct nodo{
+    dato datos;
+    struct nodo *p;
+};
+
+char * leerCuenta(FILE *fichero, int *fin);//Lee del fichero el campo cuenta
+char * leerFecha(FILE *fichero, int *fin);//Lee del fichero el campo fecha
+char * leerMensaje(FILE *fichero, int *fin);//Lee del fichero el campo mensaje
+nodo * insertar(nodo *nuevoNodo, nodo *cima);//Insertar por la cima
+void listar(nodo *cima);//Visualiza todos los elementos de la pila
+void visualiza(dato miDato);
+/*--------Funciones-----a------implementar-----------*/
+
+
+
+//TODO: IMPLEMENTAR LAS SIGUIENTES FUNCIONES
+dato cimaPila(nodo *cima); //Obtiene el elemento cima de la pila
+void listar(nodo *cima, int numElementos);//Visualizar tantos elementos como 
+//indique numElementos a partir de la cima
+nodo * quitar(nodo *cima); //Elimina un dato de la cima de la pila
+nodo * limpiarPila(nodo *cima); //Borrar todos los elementos de la pila
+
+
+/*------Main-----*/
+
+int main(int argc, char** argv) {
+    //Leer TWEETS de un fichero y almacenarlos en la pila
+    FILE *fichero;
+    dato miDato;
+    nodo *cima=NULL;
+    int i,j,numElementos=0;
+    bool correcto=true;
+    int fin=0;
+    fichero = fopen("newfile.txt", "r");//guarda el fichero en fichero
+   
+    while(!fin && correcto){  
+       //Leer los distintos campos del tweet del fichero
+        miDato.cuenta=leerCuenta(fichero,&fin);
+        if(!fin){
+            miDato.fecha=leerFecha(fichero,&fin);
+            if(!fin){
+                miDato.mensaje=leerMensaje(fichero, &fin);
+                visualiza(miDato);
+                if(!fin){
+                    //Crea un nuevo nodo para insertar en la pila  
+                    nodo *nuevoNodo;
+                    nuevoNodo=(nodo *)malloc(sizeof(nodo));
+                    nuevoNodo->datos=miDato;
+                    nuevoNodo->p=NULL;
+        
+                    //Insertar en la pila
+                    numElementos++;
+                    if(numElementos<=TAMPILA){
+                        cima=insertar(nuevoNodo,cima);
+                    }
+                    else{
+                        printf("\nError al insertar elemento en la pila, la pila esta llena\n");
+                        correcto=false;
+                    }
+                }
+            }
+        }
+    }
+    /*menu*/
+
+    int n, opcion;
+    do
+    {
+        printf( "\n   1. Visualizar por pantalla los datos del último mensaje.");
+        printf( "\n   2. Listar un numero de mensajes determinado, comenzando por el último insertado." );
+        printf( "\n   3. Eliminar el último mensaje insertado." );
+        printf( "\n   4. Borrar todos los mensajes." );
+        printf( "\n   5. Exit" );
+
+        scanf( "%d", &opcion );
+        switch ( opcion )
+        {
+            case 1: 
+                    dato cimaPila(nodo *cima);
+                    break;
+            case 2:
+                    void listar(nodo *cima);
+                    break;
+            case 3: 
+                    nodo * quitar(nodo *cima);
+                    break;    
+            case 4: 
+                    nodo * limpiarPila(nodo *cima);
+                    break;
+              
+      }
+    } while ( opcion > 4);
+    fclose(fichero);
+    listar(cima);
+    
+    //TODO: IMPLEMENTAR UN MENU QUE PERMITA
+    //1. Visualizar por pantalla los datos del nodo que está en la cima
+    //2. Listar un numero de elementos determinado a partir de la cima de la pila
+    //3. Eliminar el nodo que esta en la cima
+    //4. Borrar toda la pila
+    
+    printf("\nPulse una tecla para finalizar");
+    scanf("%c");
+    return 0;
+}
+
+/*------Definicion----de----funciones-----de-------la------lista---------*/
+
+
+char * leerCuenta(FILE *fichero, int *fin){
+       int i=0;
+       char *cadena;
+       
+       cadena=(char *)malloc(TAMCUENTA);
+       cadena[i]=fgetc(fichero);
+       while(toascii(cadena[i])!=10 && !feof(fichero)){
+            i++;
+            cadena[i]=fgetc(fichero);
+        } 
+       if(feof(fichero)){
+           *fin=1;
+       }
+       return cadena;     
+}
+char * leerFecha(FILE *fichero, int *fin){
+       int i=0;
+       char *cadena;
+       
+       cadena=(char *)malloc(TAMFECHA);
+       cadena[i]=fgetc(fichero);
+       while(toascii(cadena[i])!=10 && !feof(fichero)){
+            i++;
+            cadena[i]=fgetc(fichero);
+        }
+       if(feof(fichero)){
+           *fin=1;
+       }
+       return cadena;
+}
+char * leerMensaje(FILE *fichero, int *fin){
+       int i=0;
+       char *cadena;
+       
+       cadena=(char *)malloc(TAMMENSAJE);
+       cadena[i]=fgetc(fichero);
+       while(toascii(cadena[i])!=10 && !feof(fichero)){
+            i++;
+            cadena[i]=fgetc(fichero);
+        } 
+       if(feof(fichero)){
+           *fin=1;
+       }
+       return cadena;
+}
+
+nodo * insertar(nodo *nuevoNodo, nodo *cima){
+    if(cima==NULL){
+        cima=nuevoNodo;
+    }
+    else {
+        nuevoNodo->p = cima;
+        cima = nuevoNodo;
+    }
+    return cima;
+}
+
+void listar(nodo *cima){
+    if(cima==NULL){
+        printf("\nLa Pila esta vacia\n");
+    }
+    else{
+        nodo *ptrSiguiente=cima;
+        while(ptrSiguiente!=NULL){
+            visualiza(ptrSiguiente->datos);
+            ptrSiguiente=ptrSiguiente->p;
+        }
+    }  
+}
+
+void visualiza(dato miDato){
+    int i=0;
+    
+    while(toascii(miDato.cuenta[i])!=10){
+        fputc(miDato.cuenta[i],stdout);
+        i++;
+    }
+    i=0;
+    printf(" ");
+    while(toascii(miDato.fecha[i])!=10){
+        fputc(miDato.fecha[i],stdout);
+        i++;
+    }
+    i=0;
+    printf(" ");
+    while(toascii(miDato.mensaje[i])!=10){
+        fputc(miDato.mensaje[i],stdout);
+        i++;
+    }
+    printf("\n");
+}
+
+dato cimaPila(nodo *cima){//visualiza el nodo cima
+  if (!(cima == NULL)) {
+    printf ("La lista esta vacia");
+  }else{
+    visualiza(cima -> datos); 
+  }
+
+}
+
+void listar(nodo *cima, int numElementos){
+  if(cima==NULL){
+          printf("\nLa Pila esta vacia\n");
+      }
+      else{
+          nodo *ptrSiguiente=cima;
+          while(ptrSiguiente!=NULL){
+              visualiza(ptrSiguiente->datos);
+              ptrSiguiente=ptrSiguiente->p;
+          }
+      }  
+}
+
+nodo * quitar(nodo *cima){
+  nodo *aux;
+  if (cima  == NULL) {
+    printf("La pila esta vacia"); 
+ }else{
+    aux = cima;
+    cima = cima -> p;
+    free(aux);
+ }
+}
+
+nodo * limpiarPila(nodo *cima){
+    while (!(cima == NULL)) {
+      nodo * quitar(nodo *cima);
+    }
+    printf("La pila esta vacia");
+} 
