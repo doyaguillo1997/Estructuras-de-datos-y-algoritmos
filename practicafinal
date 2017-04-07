@@ -1,7 +1,14 @@
 /*Practica final
-version 0.0.0.0.1
-Jose Doyague Hernandez y Luis Buegos Vidales
+version 0.0.0.2
+Luis Buegos Vidales y Jose Doyague Hernandez
 */
+#include <stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <string.h>
+#include <errno.h>
 
 typedef struct datos{
   char  *imagen;
@@ -16,6 +23,11 @@ typedef struct nodo {
 nodo* insertaFinal(nodo *nuevoNodo, nodo *ptrFinal, *ptrCabecera);//inserta al final
 void mostrarLista(nodo *ptrCabecera, nodo *ptrFinal);
 void visualiza(datos fotografias);
+nodo* borrar(nodo *nuevoNodo, nodo *ptrFinal, *ptrCabecera);
+
+void error(const char *s);
+
+void procesoArchivo(char *archivo);
 
 
 /*MAIN*/
@@ -26,39 +38,36 @@ int main(int argc, char const *argv[]) {
   nodo *ptrCabecera, *ptrFinal;
   ptrCabecera = NULL;
   ptrFinal = NULL;
+  int posicion = 0;
 
 /*cambiar por ejemplo del directorio de la Practica*/
-/**/  fichero = fopen("fotografias.txt", "r");// en la misma carpeta que el main
-/**/ /*-------------LECTURA---DE----DATOS--------------------------*/
-/**/      while(!feof(fichero)){
-/**/        fscanf(fichero, "%s", fotografias.imagen);
-/**/
-/**/
-/*HASTA ESTE PUNTO */
- /*---------------------INICIO----LISTA---------------------*/
-       if(!feof(fichero)){
-        nodo *nuevoNodo;
-        nuevoNodo = (nodo *)malloc(sizeof(nodo));//reservamos espacio para el nuevo nodo
-        nuevoNodo->nombre = fotografias;// guardamos la estructura en el nodo
-        nuevoNodo->nodo_anterior = NULL; // el puntero que apunta al siguiente nodo lo ponemos a null
-        nuevoNodo->nodo_siguiente = NULL;
+DIR *dir;
+struct dirent *ent;
+dir = opendir (".");
+if (dir == NULL){
+  error("No puedo abrir el directorio");
+}
+while ((ent = readdir (dir)) != NULL) {
+    /* Nos devolverá el directorio actual (.) y el anterior (..), como hace ls */
+    if ( (strcmp(ent->d_name, ".")!=0) && (strcmp(ent->d_name, "..")!=0) )
+    fotografia = ent->d_name
+  {
+    fotografia = ent->d_name
+    nodo *nuevoNodo;
+    nuevoNodo = (nodo *)malloc(sizeof(nodo));//reservamos espacio para el nuevo nodo
+    nuevoNodo->nombre = fotografias;// guardamos la estructura en el nodo
+    nuevoNodo->nodo_anterior = NULL; // el puntero que apunta al siguiente nodo lo ponemos a null
+    nuevoNodo->nodo_siguiente = NULL;
 
-        if (ptrCabecera == NULL){//si no hay mas nodos lo metemos detras detras de la cabecera
-            ptrCabecera = nuevoNodo;
-        }
-       ptrFinal = insertaFinal(nuevoNodo, ptrFinal, ptrCabecera);//inserta final cambia los punteros de final e inicio para que se coloquen al final.
-      }
+    if (ptrCabecera == NULL){//si no hay mas nodos lo metemos detras detras de la cabecera
+        ptrCabecera = nuevoNodo;
     }
+   ptrFinal = insertaFinal(nuevoNodo, ptrFinal, ptrCabecera);//inserta final cambia los punteros de final e inicio para que se coloquen al final.
+  }
+  }
+closedir (dir);
  /*----------FIN----LISTA---------*/
-   fclose(fichero);// cerramos el fichero
    mostrarLista(ptrCabecera);
-   return 0;
-
-
-
-
-
-
 
 
   do {
@@ -84,6 +93,7 @@ int main(int argc, char const *argv[]) {
 
   } while(menu == 4);
 
+  printf("We love Totoro")
   return 0;
 }//MAIN
 
@@ -121,5 +131,70 @@ nodo* insertaFinal(nodo *nuevoNodo, nodo *ptrFinal, *ptrCabecera){//inserta al f
     ptrCabecera -> nodo_anterior = nuevoNodo;
     ptrFinal = nuevoNodo;
     return nuevoNodo;// devolvemos nuevo nodo en lugar de un puntero doble
+  }
+}
+
+
+
+void siguiente(nodo *ptrCabecera){//muestra la lista
+    if(ptrCabecera == NULL){// excepcion
+        printf("\n========================\n Fichero de datos vacio\n========================\n");
+    }
+    else{
+        nodo *ptrSiguiente = ptrCabecera;
+        ptrSiguiente = ptrSiguiente->nodo_siguiente;
+        visualiza(ptrSiguiente->datos);
+        }
+      }
+}
+void anterior(nodo *ptrCabecera, nodo *ptrFinal){//muestra la lista
+
+    if(ptrCabecera == NULL){// excepcion
+        printf("\n========================\n Fichero de datos vacio\n========================\n");
+    }
+    else{
+        nodo *ptrAnterior = ptrCabecera;
+        ptrAnterior = ptrAnterior->nodo_anterior;
+        visualiza(ptrAnterior->datos);
+        }
+      }
+}
+void borrar(nodo *nuevoNodo, nodo *ptrFinal,nodo *ptrCabecera){
+  if(ptrCabecera == NULL || ptrFinal == NULL){
+      printf("Cola vacia no se puede eliminar nada!!!!!!!!!!");
+  }else if(nodo->nodo_anterior == ptrFinal){
+    nuevoNodo -> nodo_siguiente->nodo_anterior = ptrFinal;
+    ptrFinal -> nodo_siguiente = nuevoNodo -> nodo_siguiente -> nodo_anterior;
+    ptrCabecera = ptrFinal-> nodo_siguiente;
+    free(nuevoNodo);
+  }else if(nodo -> nodo_siguiente == ptrCabecera){
+    nuevoNodo -> nodo_anterior -> nodo_siguiente = ptrCabecera;
+    ptrFinal = nuevoNodo -> nodo_anterior;
+    ptrCabecera -> nodo_anterior = nuevoNodo -> nodo_anterior -> nodo_siguiente;
+    free(nuevoNodo);
+  }else if(nuevoNodo -> nodo_siguiente == nuevoNodo -> nodo_anterior ){
+    free(nuevoNodo);
+    printf("Cola vacia!!");
+  }else if(nuevoNodo -> nodo_anterior == ptrCabecera && nuevoNodo -> nodo_anterior -> nodo_siguiente == ptrFinal){
+      ptrCabecera = nuevoNodo -> nodo_anterior;
+      ptrFinal = nuevoNodo ->nodo_siguiente;
+  }else{
+    nuevoNodo -> nodo_anterior -> nodo_siguiente = nuevoNodo -> nodo_siguiente;
+    nuevoNodo -> nodo_siguiente ->nodo_anterior = nuevoNodo -> nodo_anterior;
+    free(nuevoNodo);
+  }
+}
+
+void eliminarTodo(nodo *nuevoNodo, nodo *ptrFinal,nodo *ptrCabecera){
+  if(ptrCabecera == NULL){// excepcion
+      printf("\n========================\n Fichero de datos vacio\n========================\n");
+  }
+  else{
+      nodo *ptrSiguiente = ptrCabecera;
+      while(ptrSiguiente != NULL || ptrSiguiente == ptrFinal){
+          borrar(nuevoNodo);
+          ptrSiguiente = ptrSiguiente->nodo_siguiente;
+      }
+    }
   }
 }
