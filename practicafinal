@@ -2,6 +2,10 @@
 version 0.0.0.2
 Luis Buegos Vidales y Jose Doyague Hernandez
 */
+
+/*En el programa tenemos el mismo error repetido 33 veces y no sabemos que hacer para solucionarlo
+el error es  Error: invalid use of inclomplete type 'struct nodo' y aparente lo tenemos bien declado*/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -12,18 +16,18 @@ Luis Buegos Vidales y Jose Doyague Hernandez
 
 typedef struct datos{
   char  *imagen;
-}dato
+}dato;
 
-typedef struct nodo {
+typedef struct nodo{
   struct nodo *nodo_siguiente;
   dato nombre;
   struct nodo *nodo_anterior;
-}
+} nodo;
 
-nodo* insertaFinal(nodo *nuevoNodo, nodo *ptrFinal, *ptrCabecera);//inserta al final
+nodo* insertaFinal(nodo *nuevoNodo, nodo *ptrFinal,nodo *ptrCabecera);//inserta al final
 void mostrarLista(nodo *ptrCabecera, nodo *ptrFinal);
-void visualiza(datos fotografias);
-nodo* borrar(nodo *nuevoNodo, nodo *ptrFinal, *ptrCabecera);
+void visualiza(datos fotografia);
+nodo* borrar(nodo *nuevoNodo, nodo *ptrFinal ,nodo *ptrCabecera, nodo *ptrSiguiente);
 
 void error(const char *s);
 
@@ -34,12 +38,11 @@ void procesoArchivo(char *archivo);
 int main(int argc, char const *argv[]) {
   //leemos datos de un fichero y los metemos en una lista
   FILE *fichero;
-  dato fotografias;
-  nodo *ptrCabecera, *ptrFinal;
+  dato fotografia;
+  nodo *ptrCabecera, *ptrFinal, *ptrSiguiente;
   ptrCabecera = NULL;
   ptrFinal = NULL;
-  int posicion = 0;
-
+  int menu;
 /*cambiar por ejemplo del directorio de la Practica*/
 DIR *dir;
 struct dirent *ent;
@@ -50,14 +53,15 @@ if (dir == NULL){
 while ((ent = readdir (dir)) != NULL) {
     /* Nos devolverá el directorio actual (.) y el anterior (..), como hace ls */
     if ( (strcmp(ent->d_name, ".")!=0) && (strcmp(ent->d_name, "..")!=0) )
-    fotografia = ent->d_name
+    fotografia = ent->d_name;
   {
-    fotografia = ent->d_name
+    fotografia = ent->d_name;
     nodo *nuevoNodo;
     nuevoNodo = (nodo *)malloc(sizeof(nodo));//reservamos espacio para el nuevo nodo
-    nuevoNodo->nombre = fotografias;// guardamos la estructura en el nodo
+    nuevoNodo->nombre = fotografia;// guardamos la estructura en el nodo
     nuevoNodo->nodo_anterior = NULL; // el puntero que apunta al siguiente nodo lo ponemos a null
     nuevoNodo->nodo_siguiente = NULL;
+    nodo *ptrSiguiente = ptrCabecera;
 
     if (ptrCabecera == NULL){//si no hay mas nodos lo metemos detras detras de la cabecera
         ptrCabecera = nuevoNodo;
@@ -67,10 +71,11 @@ while ((ent = readdir (dir)) != NULL) {
   }
 closedir (dir);
  /*----------FIN----LISTA---------*/
-   mostrarLista(ptrCabecera);
+   mostrarLista(ptrCabecera, ptrFinal);
 
 
   do {
+
       switch (menu) {
         case 1:
 
@@ -91,9 +96,8 @@ closedir (dir);
 
       }
 
-  } while(menu == 4);
 
-  printf("We love Totoro")
+  } while(menu == 4);
   return 0;
 }//MAIN
 
@@ -120,7 +124,7 @@ void visualiza(datos fotografias){
 
 
 
-nodo* insertaFinal(nodo *nuevoNodo, nodo *ptrFinal, *ptrCabecera){//inserta al final
+nodo* insertaFinal(nodo *nuevoNodo, nodo *ptrFinal,nodo *ptrCabecera){//inserta al final
   if(ptrFinal == NULL){
     return nuevoNodo;
   }
@@ -136,17 +140,15 @@ nodo* insertaFinal(nodo *nuevoNodo, nodo *ptrFinal, *ptrCabecera){//inserta al f
 
 
 
-void siguiente(nodo *ptrCabecera){//muestra la lista
+void siguiente(nodo ptrSiguiente, nodo *ptrCabecera, nodo *ptrFinal){//muestra la lista
     if(ptrCabecera == NULL){// excepcion
         printf("\n========================\n Fichero de datos vacio\n========================\n");
     }
     else{
-        nodo *ptrSiguiente = ptrCabecera;
         ptrSiguiente = ptrSiguiente->nodo_siguiente;
         visualiza(ptrSiguiente->datos);
         }
       }
-}
 void anterior(nodo *ptrCabecera, nodo *ptrFinal){//muestra la lista
 
     if(ptrCabecera == NULL){// excepcion
@@ -158,30 +160,29 @@ void anterior(nodo *ptrCabecera, nodo *ptrFinal){//muestra la lista
         visualiza(ptrAnterior->datos);
         }
       }
-}
-void borrar(nodo *nuevoNodo, nodo *ptrFinal,nodo *ptrCabecera){
+void borrar(nodo *ptrSiguiente, nodo *ptrFinal,nodo *ptrCabecera, nodo *nuevoNodo){
   if(ptrCabecera == NULL || ptrFinal == NULL){
       printf("Cola vacia no se puede eliminar nada!!!!!!!!!!");
-  }else if(nodo->nodo_anterior == ptrFinal){
-    nuevoNodo -> nodo_siguiente->nodo_anterior = ptrFinal;
-    ptrFinal -> nodo_siguiente = nuevoNodo -> nodo_siguiente -> nodo_anterior;
+  }else if(ptrSiguiente->nodo_anterior == ptrFinal){
+    ptrSiguiente -> nodo_siguiente->nodo_anterior = ptrFinal;
+    ptrFinal -> nodo_siguiente = ptrSiguiente -> nodo_siguiente -> nodo_anterior;
     ptrCabecera = ptrFinal-> nodo_siguiente;
+    free(ptrSiguiente);
+  }else if(ptrSiguiente -> nodo_siguiente == ptrCabecera){
+    ptrSiguiente -> nodo_anterior -> nodo_siguiente = ptrCabecera;
+    ptrFinal = ptrSiguiente -> nodo_anterior;
+    ptrCabecera -> nodo_anterior = ptrSiguiente -> nodo_anterior -> nodo_siguiente;
     free(nuevoNodo);
-  }else if(nodo -> nodo_siguiente == ptrCabecera){
-    nuevoNodo -> nodo_anterior -> nodo_siguiente = ptrCabecera;
-    ptrFinal = nuevoNodo -> nodo_anterior;
-    ptrCabecera -> nodo_anterior = nuevoNodo -> nodo_anterior -> nodo_siguiente;
-    free(nuevoNodo);
-  }else if(nuevoNodo -> nodo_siguiente == nuevoNodo -> nodo_anterior ){
+  }else if(ptrSiguiente -> nodo_siguiente == ptrSiguiente -> nodo_anterior ){
     free(nuevoNodo);
     printf("Cola vacia!!");
-  }else if(nuevoNodo -> nodo_anterior == ptrCabecera && nuevoNodo -> nodo_anterior -> nodo_siguiente == ptrFinal){
-      ptrCabecera = nuevoNodo -> nodo_anterior;
-      ptrFinal = nuevoNodo ->nodo_siguiente;
+  }else if(ptrSiguiente -> nodo_anterior == ptrCabecera && ptrSiguiente -> nodo_anterior -> nodo_siguiente == ptrFinal){
+      ptrCabecera = ptrSiguiente -> nodo_anterior;
+      ptrFinal = ptrSiguiente ->nodo_siguiente;
   }else{
-    nuevoNodo -> nodo_anterior -> nodo_siguiente = nuevoNodo -> nodo_siguiente;
-    nuevoNodo -> nodo_siguiente ->nodo_anterior = nuevoNodo -> nodo_anterior;
-    free(nuevoNodo);
+    ptrSiguiente -> nodo_anterior -> nodo_siguiente = ptrSiguiente -> nodo_siguiente;
+    ptrSiguiente -> nodo_siguiente ->nodo_anterior = ptrSiguiente -> nodo_anterior;
+    free(ptrSiguiente);
   }
 }
 
@@ -192,9 +193,9 @@ void eliminarTodo(nodo *nuevoNodo, nodo *ptrFinal,nodo *ptrCabecera){
   else{
       nodo *ptrSiguiente = ptrCabecera;
       while(ptrSiguiente != NULL || ptrSiguiente == ptrFinal){
-          borrar(nuevoNodo);
+          borrar(ptrSiguiente);
           ptrSiguiente = ptrSiguiente->nodo_siguiente;
       }
     }
   }
-}
+
