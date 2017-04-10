@@ -118,7 +118,7 @@ void mostrarLista(nodo *ptrCabecera, nodo *ptrFinal){//muestra la lista
     }
     else{
         nodo *ptrSiguiente = ptrCabecera;
-        while(ptrSiguiente != NULL || ptrSiguiente == ptrFinal){
+        while((ptrSiguiente != NULL)|| (ptrSiguiente != ptrFinal)){//bucle infinito?? por que??
             visualiza(ptrSiguiente->nombre);
             ptrSiguiente = ptrSiguiente->nodo_siguiente;
         }
