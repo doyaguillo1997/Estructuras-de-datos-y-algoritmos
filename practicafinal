@@ -85,32 +85,30 @@ while ((ent = readdir (dir)) != NULL) {
   }
 closedir (dir);
  /*----------FIN----LISTA---------*/
-   mostrarLista(ptrCabecera, ptrFinal);
+   //mostrarLista(ptrCabecera, ptrFinal);
 
 
   do {
 
       switch (menu) {
         case 1:
-
+              mostrarLista(ptrCabecera, ptrFinal);
               break;
         case 2:
-
+              siguiente(ptrSiguiente,ptrCabecera,ptrFinal);
               break;
         case 3:
-
+              anterior(nodo *ptrCabecera, nodo *ptrFinal);
               break;
         case 4:
               printf("Saliendo del programa\n");
               break;
         default:
-
+            printf("El valor introducido no es válido.");
+            printf("Por favor introduzca un valor de los del menu.");
               break;
-
-
       }
-
-
+      
   } while(menu == 4);
   return 0;
 }//MAIN
@@ -122,7 +120,7 @@ void mostrarLista(nodo *ptrCabecera, nodo *ptrFinal){//muestra la lista
     }
     else{
         nodo *ptrSiguiente = ptrCabecera;
-        while(ptrSiguiente != NULL || ptrSiguiente == ptrFinal){
+        while(ptrSiguiente != NULL || ptrSiguiente == ptrFinal){//bucle infinito??
             //ERROR: no existe el campo datos en la estructura
             //de los nodos, es el campo nombre, y dentro de nombre
             //que es de tipo dato, está la cadena char *imagen
