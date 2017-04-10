@@ -26,7 +26,11 @@ typedef struct nodo{
 
 nodo* insertaFinal(nodo *nuevoNodo, nodo *ptrFinal,nodo *ptrCabecera);//inserta al final
 void mostrarLista(nodo *ptrCabecera, nodo *ptrFinal);
+//ERROR: si usais el alias dato para la estructura de tipo datos
+//por qué luego usáis datos???, revisad el código
 void visualiza(datos fotografia);
+//ERROR a borrar solo tenéis que pasarle el puntero al nodo actual a borrar
+//el ptr a la cabeza y el ptr al final. 
 nodo* borrar(nodo *nuevoNodo, nodo *ptrFinal ,nodo *ptrCabecera, nodo *ptrSiguiente);
 
 void error(const char *s);
@@ -46,16 +50,26 @@ int main(int argc, char const *argv[]) {
 /*cambiar por ejemplo del directorio de la Practica*/
 DIR *dir;
 struct dirent *ent;
+//ERROR: si vamos a guardar las imagenes en una carpeta llamada imagenes
+//sería dir=opendir("./imagenes");
 dir = opendir (".");
 if (dir == NULL){
-  error("No puedo abrir el directorio");
+    //ERROR: aqui llamáis a esta función, pero no la tenéis implementada
+    //esta función venía con el código de acceso al directorio de imagen
+    //lo que hace es recibir una cadena y simplemente la muestra por pantalla
+  //error("No puedo abrir el directorio");
 }
 while ((ent = readdir (dir)) != NULL) {
     /* Nos devolverá el directorio actual (.) y el anterior (..), como hace ls */
     if ( (strcmp(ent->d_name, ".")!=0) && (strcmp(ent->d_name, "..")!=0) )
-    fotografia = ent->d_name;
+    //ERROR: fotografia es una variable de tipo estructura dato
+    //y d_name es una cadena
+    //la cosa sería así fotografia.imagen=ent->d_name
+        fotografia.imagen=ent->d_name;
+   // fotografia = ent->d_name;
   {
-    fotografia = ent->d_name;
+        fotografia.imagen=ent->d_name;
+   // fotografia = ent->d_name;
     nodo *nuevoNodo;
     nuevoNodo = (nodo *)malloc(sizeof(nodo));//reservamos espacio para el nuevo nodo
     nuevoNodo->nombre = fotografia;// guardamos la estructura en el nodo
@@ -109,7 +123,11 @@ void mostrarLista(nodo *ptrCabecera, nodo *ptrFinal){//muestra la lista
     else{
         nodo *ptrSiguiente = ptrCabecera;
         while(ptrSiguiente != NULL || ptrSiguiente == ptrFinal){
-            visualiza(ptrSiguiente->datos);
+            //ERROR: no existe el campo datos en la estructura
+            //de los nodos, es el campo nombre, y dentro de nombre
+            //que es de tipo dato, está la cadena char *imagen
+            //visualiza(ptrSiguiente->datos);
+            visualiza(ptrSiguiente->nombre);
             ptrSiguiente = ptrSiguiente->nodo_siguiente;
         }
     }
@@ -140,13 +158,19 @@ nodo* insertaFinal(nodo *nuevoNodo, nodo *ptrFinal,nodo *ptrCabecera){//inserta 
 
 
 
-void siguiente(nodo ptrSiguiente, nodo *ptrCabecera, nodo *ptrFinal){//muestra la lista
+//ERROR: prtSiguiente es un puntero y no poneis el * delante,
+//debería ser así nodo *prtSiguiente
+//void siguiente(nodo ptrSiguiente, nodo *ptrCabecera, nodo *ptrFinal){//muestra la lista
+void siguiente(nodo *ptrSiguiente, nodo *ptrCabecera, nodo *ptrFinal){
     if(ptrCabecera == NULL){// excepcion
         printf("\n========================\n Fichero de datos vacio\n========================\n");
     }
     else{
-        ptrSiguiente = ptrSiguiente->nodo_siguiente;
-        visualiza(ptrSiguiente->datos);
+        //ptrSiguiente = ptrSiguiente->nodo_siguiente;
+        ptrSiguiente=ptrSiguiente->nodo_siguiente;
+        //ERROR:
+        //visualiza(ptrSiguiente->datos);
+        visualiza(ptrSiguiente->nombre);
         }
       }
 void anterior(nodo *ptrCabecera, nodo *ptrFinal){//muestra la lista
@@ -157,10 +181,18 @@ void anterior(nodo *ptrCabecera, nodo *ptrFinal){//muestra la lista
     else{
         nodo *ptrAnterior = ptrCabecera;
         ptrAnterior = ptrAnterior->nodo_anterior;
-        visualiza(ptrAnterior->datos);
+        //ERROR:
+        //visualiza(ptrAnterior->datos);
+        visualiza(ptrAnterior->nombre);
         }
       }
-void borrar(nodo *ptrSiguiente, nodo *ptrFinal,nodo *ptrCabecera, nodo *nuevoNodo){
+//ERROR: revisad esta funcion, solo hay que pasarle el nodo actual a borrar
+//el ptr a la cabeza y el ptr al final
+//además os da error porque en la cabecera ponéis que devuelve un puntero a nodo
+//y aqui poneis void.
+//void borrar(nodo *ptrSiguiente, nodo *ptrFinal,nodo *ptrCabecera, nodo *nuevoNodo){
+//en tal caso sería así:
+nodo* borrar(nodo *nuevoNodo, nodo *ptrFinal ,nodo *ptrCabecera, nodo *ptrSiguiente){
   if(ptrCabecera == NULL || ptrFinal == NULL){
       printf("Cola vacia no se puede eliminar nada!!!!!!!!!!");
   }else if(ptrSiguiente->nodo_anterior == ptrFinal){
@@ -193,9 +225,20 @@ void eliminarTodo(nodo *nuevoNodo, nodo *ptrFinal,nodo *ptrCabecera){
   else{
       nodo *ptrSiguiente = ptrCabecera;
       while(ptrSiguiente != NULL || ptrSiguiente == ptrFinal){
-          borrar(ptrSiguiente);
+          //ERROR, aqui llamais a la funcion borrar pasándole un solo argumento
+          //pero la cabecera de esta función es void borrar(nodo *ptrSiguiente, nodo *ptrFinal,nodo *ptrCabecera, nodo *nuevoNodo)
+          //así que hay que llamarla borrar(ptrSiguiente, prtFinal, ptrCabecera, nuevoNodo)
+          //Pero no tiene sentido que hagáis esta llamada pasando nuevoNodo
+          //tampoco tiene sentido que eliminarTodo reciba nuevoNodo, para que?
+          //con tener el prtFinal y el prtCabecera es suficiente
+          //No vais a poder reutilizar aqui la función borrar
+          //en eliminarTodo poned las instrucciones para ir borrando nodo a nodo sin
+          //llamar a la funcion borrar y teniendo en cuenta que a eliminarTodo solo
+          //debéis pasarle el ptrFinal y el prtCabecera
+          //borrar(ptrSiguiente);
           ptrSiguiente = ptrSiguiente->nodo_siguiente;
       }
     }
   }
+
 
