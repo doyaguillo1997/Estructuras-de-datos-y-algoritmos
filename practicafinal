@@ -106,7 +106,7 @@ closedir (dir);
               break;
       }
 
-  } while(menu == 5);
+  } while(menu < 5);
   return 0;
 }//MAIN
 
