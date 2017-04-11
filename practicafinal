@@ -54,7 +54,7 @@ while ((ent = readdir (dir)) != NULL) {
     if ( (strcmp(ent->d_name, ".")!=0) && (strcmp(ent->d_name, "..")!=0) )
         fotografia.imagen=ent->d_name;
   {
-        fotografia.imagen=ent->d_name;
+       //fotografia.imagen=ent->d_name;
   
     nodo *nuevoNodo;
     nuevoNodo = (nodo *)malloc(sizeof(nodo));//reservamos espacio para el nuevo nodo
