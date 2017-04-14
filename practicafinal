@@ -1,8 +1,3 @@
-/*
-Version 0.0.0.3
-Jose Doyague Hernandez
-*/
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -11,6 +6,8 @@ Jose Doyague Hernandez
 #include <string.h>
 #include <errno.h>
 
+
+/*Estructuras de la cola*/
 typedef struct datos{
   char  *imagen;
 }dato;
@@ -21,110 +18,114 @@ typedef struct nodo{
   struct nodo *nodo_anterior;
 } nodo;
 
-nodo* insertaFinal(nodo *nuevoNodo, nodo *ptrFinal,nodo *ptrCabecera);//inserta al final
-nodo* borrar(nodo *nuevoNodo, nodo *ptrFinal ,nodo *ptrCabecera, nodo *ptrSiguiente);// borra el elemento actual de la lista
-void mostrarLista(nodo *ptrCabecera, nodo *ptrFinal);// muestra la lista
-void visualiza(datos fotografia); //visualiza el campo nombre del nodo
-void siguiente(nodo *ptrSiguiente, nodo *ptrCabecera, nodo *ptrFinal);
-void anterior(nodo *ptrCabecera, nodo *ptrFinal);
-
+/*Declaracion de funciones*/
+nodo* crearNodo(char *nombre);
+nodo* borrar(nodo *ptrFinal, nodo *ptrCabecera, nodo *ptrActual);// Borra el nodo en el que nos encontramos de la lista.
+nodo* insertaFinal(nodo *nuevoNodo, nodo *ptrFinal,nodo *ptrCabecera);//inserta al final.
+void eliminarTodo(nodo *ptrFinal, nodo *ptrCabecera, nodo *ptrActual);// Borra toda la lista desde la cabeza. Utiliza el puntero final para saber cuando parar y el actual para hacer mas facil el reciclado de codigo de la funcion borrar.
+void siguiente(nodo *ptrActual, nodo *ptrFinal, nodo *ptrCabecera);// Avanza el puntero actual al siguiente.
+void anterior(nodo *ptrActual, nodo *ptrFinal, nodo *ptrCabecera);// Retrocede el puntero actual nodo anterior
+void mostrarLista(nodo *ptrActual, nodo *ptrCabecera, nodo *ptrFinal);// recorre la lista elemento a elemento desde el principio hasta el final y llama al procedimiento visualiza
+void visualiza(dato fotografia);// muestra por pantalla lo contenido en el campo nombre de la estructura nodo.
 void error(const char *s);
-void procesoArchivo(char *archivo);
 
-
-/*MAIN*/
+/*Main*/
 int main(int argc, char const *argv[]) {
   //leemos datos de un fichero y los metemos en una lista
   FILE *fichero;
   dato fotografia;
-  nodo *ptrCabecera, *ptrFinal, *ptrSiguiente;
-  ptrCabecera = NULL;
-  ptrFinal = NULL;
-  int menu;
-
+  nodo *ptrCabecera, *ptrFinal;
+  nodo *ptrActual;// Almacena la informacion de nodo actual tanto para acceder a los datos, como avanzar o retroceder.
+  ptrCabecera = NULL;// Un puntero al primer nodo de la lista.
+  ptrFinal = NULL;// Un puntero al ultimo nodo de la lista.
+  int i;// Variable utilizada para el menu.
+/*Lectura de datos del directorio*/
 DIR *dir;
 struct dirent *ent;
-/*si vamos a guardar las imagenes en una carpeta llamada imagenes:*/
-dir=opendir("./imagenes");
+/*si vamos a guardar las imagenes en una carpeta llamada imagenes
+sería dir=opendir("./imagenes");*/
+dir = opendir ("./imagenes");
 if (dir == NULL){
-  error("No se pudo abrir el directorio");
+  //ERROR: aqui llamáis a esta función, pero no la tenéis implementada
+  //esta función venía con el código de acceso al directorio de imagen
+  //lo que hace es recibir una cadena y simplemente la muestra por pantalla
+  //error("No puedo abrir el directorio");
 }
 while ((ent = readdir (dir)) != NULL) {
     /* Nos devolverá el directorio actual (.) y el anterior (..), como hace ls */
     if ( (strcmp(ent->d_name, ".")!=0) && (strcmp(ent->d_name, "..")!=0) )
         fotografia.imagen=ent->d_name;
   {
-       //fotografia.imagen=ent->d_name;
-  
+        fotografia.imagen=ent->d_name;//si se quita de error
     nodo *nuevoNodo;
     nuevoNodo = (nodo *)malloc(sizeof(nodo));//reservamos espacio para el nuevo nodo
     nuevoNodo->nombre = fotografia;// guardamos la estructura en el nodo
     nuevoNodo->nodo_anterior = NULL; // el puntero que apunta al siguiente nodo lo ponemos a null
-    nuevoNodo->nodo_siguiente = NULL;
-    nodo *ptrSiguiente = ptrCabecera;
-
+    nuevoNodo->nodo_siguiente = NULL; // el puntero que apunta al anterior nodo lo ponemos a null
+    nodo *ptrActual = ptrCabecera;
     if (ptrCabecera == NULL){//si no hay mas nodos lo metemos detras detras de la cabecera
         ptrCabecera = nuevoNodo;
     }
    ptrFinal = insertaFinal(nuevoNodo, ptrFinal, ptrCabecera);//inserta final cambia los punteros de final e inicio para que se coloquen al final.
-  }
+    }
   }
 closedir (dir);
  /*----------FIN----LISTA---------*/
-  fflush(stdin);
-  do {
-    printf("0. Salir.\n ");
-    printf("1. Avanzar: muestra la siguiente imagen.\n ");
-    printf("2. Retroceder: muestra la imagen anterior.\n ");
-    printf("3. Borrar: elimina la imagen que se este mostrando actualmente y visualiza el nombre de la imagen siguiente.\n ");
-    printf("4. Limpiar: elimina todas las imagenes de la lista.\n");
-    printf("5. Cargar: carga la lista doblemente enlazada circular con las imagenes almacenadas en el directorio que se indique.\n");
-    printf("Elija una opcion: \n");
-    scanf("%d", &menu);
-    fflush(stdin);
+ptrActual = ptrCabecera;
+mostrarLista(ptrActual, ptrCabecera, ptrFinal);// Da bucle infinito
+// La funcion mostrarLista da un bucle infinito pero el resto de funciones de la lista funcionan, aparentemente.
+// Tambien tengp que solucionar el acceso al directorio de imagenes y el guardado de datos en la lista
+// ademas de creacion de nodos en la lista mientras se introduce los valores leidos
+//siguiente(ptrActual, ptrFinal, ptrCabecera);
+//visualiza(ptrActual->nombre); 
+    do {
 
-      switch (menu) {
+      switch (i) {
         case 1:
-              mostrarLista(ptrCabecera, ptrFinal);
+            siguiente(ptrActual, ptrFinal, ptrCabecera);
+            visualiza(ptrActual->nombre);
               break;
         case 2:
-
+               anterior(ptrActual, ptrFinal, ptrCabecera);
+               visualiza(ptrActual->nombre);
               break;
         case 3:
-
+              borrar(ptrFinal, ptrCabecera, ptrActual);
               break;
         case 4:
-              
+              eliminarTodo(ptrFinal, ptrCabecera, ptrActual);
               break;
         case 5:
-              
+              printf("Saliendo del programa\n");
               break;
         default:
-            printf("El valor introducido no es valido.");
-            printf("Por favor introduzca un valor de los del menu.");
-
+              printf("\n El valor introducido no esta incluido en el menu");
               break;
       }
 
-  } while(menu < 5);
+
+  } while(i != 5);
   return 0;
 }//MAIN
 
-void mostrarLista(nodo *ptrCabecera, nodo *ptrFinal){//muestra la lista
+
+
+
+/*Definicion de funciones*/
+void mostrarLista(nodo *ptrActual, nodo *ptrCabecera, nodo *ptrFinal){//muestra la lista
     if(ptrCabecera == NULL){// excepcion
         printf("\n========================\n Fichero de datos vacio\n========================\n");
     }
     else{
-        nodo *ptrSiguiente = ptrCabecera;
-        while((ptrSiguiente != NULL)|| (ptrSiguiente != ptrFinal)){//bucle infinito?? por que??
-            visualiza(ptrSiguiente->nombre);
-            ptrSiguiente = ptrSiguiente->nodo_siguiente;
+        while((ptrActual != NULL) || (ptrActual != ptrFinal)){
+            visualiza(ptrActual->nombre);
+            ptrActual = ptrActual->nodo_siguiente;
         }
     }
 }
 
-void visualiza(datos fotografias){
-    printf("\nNombre fotos: %s", fotografias.imagen);
+void visualiza(datos fotografia){
+    printf("Nombre fotos: %s\n", fotografia.imagen);
 }
 
 nodo* insertaFinal(nodo *nuevoNodo, nodo *ptrFinal,nodo *ptrCabecera){//inserta al final
@@ -141,70 +142,128 @@ nodo* insertaFinal(nodo *nuevoNodo, nodo *ptrFinal,nodo *ptrCabecera){//inserta 
   }
 }
 
-void siguiente(nodo *ptrSiguiente, nodo *ptrCabecera, nodo *ptrFinal){// avanza al siguiente elemento de la lista y lo muestra por pantalla
-    if(ptrCabecera == NULL){// excepcion
-        printf("\n========================\n Fichero de datos vacio\n========================\n");
+nodo* borrar(nodo *ptrFinal, nodo *ptrCabecera, nodo *ptrActual){
+  // La funcion borra elimina el nodo actual de la lista
+  // Recibe los punteros cabecera, final y actual y devuelve el puntero actual modificado
+  //evalua los diferentes casos de la lista dependiendo de la posicion de ptrActual y del tamaño de la lista
+  //Se evaluan los caso en los que se quiere eliminar el primer y el ultimo nodo
+  // los casos en los que la lista tiene 0, 1, 2 o 3 nodos y el generico, +3 nodos.
+  if ((ptrCabecera == NULL) || (ptrFinal == NULL)) {// Caso de lista vacia
+    printf("La lista esta vacian no se puede eliminar nada!!!");
+    return ptrActual = ptrCabecera;// devolvemos ptrActual como ptrCabecera, que esta a null por que la lista esta vacia
+  }else if ((ptrActual -> nodo_siguiente) == (ptrActual-> nodo_anterior)) { // Caso de un solo nodo
+    free(ptrActual);
+    ptrFinal = NULL;
+    ptrCabecera = NULL;
+    return  ptrActual = NULL;
+  }else if ((ptrActual->nodo_anterior == ptrCabecera)&&(ptrActual->nodo_siguiente == ptrFinal)){// caso de 2 nodos
+    ptrCabecera = ptrActual -> nodo_anterior;
+    ptrFinal = ptrCabecera;
+    ptrActual -> nodo_anterior -> nodo_siguiente = ptrFinal;
+    ptrActual -> nodo_siguiente -> nodo_anterior = ptrCabecera;
+    free(ptrActual);
+    return ptrActual = ptrCabecera;//cambianos a donde apunta ptrActual y lo devolvemos
+/*ESTE ALGORITMO TAMBIEN SE USARA EN LA PARTE DE ELIMINAR TODO*/
+  }else if (ptrActual -> nodo_anterior == ptrFinal){// Querer eliminar el primer nodo
+    ptrActual -> nodo_siguiente -> nodo_anterior = ptrFinal;//asignamos al siguiente nodo un nuevo puntero a nodo_anterior
+    ptrFinal -> nodo_anterior = ptrActual -> nodo_siguiente;//haciendo que el segundo nodo apunte al ultimo de esta forma el puntero que antes apuntaba al primer nodo ahor apunta al segundo.
+    ptrCabecera = ptrFinal -> nodo_siguiente;//actulizamos el ptrCabecera para que apunte a la nueva cabecera
+    free(ptrActual);// eliminamos el nodo en el que nos encontramos
+    return ptrActual = ptrCabecera;// devolvemos el ptrActual apuntando al nodo siguiente al que apuntaba, que ahora es la cabecera
+/*HASTA AQUI*/
+  }else if(ptrActual -> nodo_siguiente == ptrCabecera){// Querer eliminar el ultimo nodo
+    ptrActual -> nodo_anterior -> nodo_siguiente = ptrCabecera;// Cambiamos a donde apunta el penultimo nodo, asi podremos convertilo en el ultimo despues.
+    ptrCabecera -> nodo_anterior = ptrActual -> nodo_anterior; // Hacemos que el primer nodo apunte al penultimo, para poder convertir despues el penultimo en el ultimo.
+    ptrFinal = ptrCabecera -> nodo_anterior;// Actualizamos el puntefinal para que sea el ultimo.
+    free(ptrActual);
+    return ptrActual = ptrFinal;// hecemos que puntero actual apunte al ultimo nodo de la lista, como al llamar a la funcion.
+  }else if(ptrFinal -> nodo_anterior == ptrCabecera -> nodo_siguiente ){// Caso de 3 nodos
+    ptrFinal -> nodo_anterior = ptrCabecera;// Como entre ptrCabecera y ptrFinal solo hay nodo se pueden enlazar directamente
+    ptrCabecera -> nodo_siguiente = ptrFinal;// dejando el nodo del medio apuntado solo por ptrActual.
+    free(ptrActual);
+    return ptrActual = ptrFinal;
+  }else{// caso generico si no se da ninguna de las anteriores < 3
+    nodo* ptrAux;// Vamos a necesitar un puntero auxiliar donde almancenar ptrActual antes de borrarlo
+    ptrAux = ptrActual -> nodo_siguiente;// guardamos la posicion siguiente al nodo en el que estamos, asi podremos acceder al elemento siguiente al que queremos eliminar despues de hacer el free(ptrActual)
+    ptrActual -> nodo_siguiente -> nodo_anterior = ptrActual -> nodo_anterior;
+    ptrActual -> nodo_anterior -> nodo_siguiente = ptrActual -> nodo_siguiente;
+    free(ptrActual);
+    return ptrActual = ptrAux;
     }
-    else{
-        ptrSiguiente=ptrSiguiente->nodo_siguiente;
-        visualiza(ptrSiguiente->nombre);
-        }
-      }
-void anterior(nodo *ptrCabecera, nodo *ptrFinal){// retrocede al anterior elemento de la lista y lo muestra
+  }
 
-    if(ptrCabecera == NULL){// excepcion
-        printf("\n========================\n Fichero de datos vacio\n========================\n");
+void  eliminarTodo(nodo *ptrActual, nodo *ptrCabecera, nodo *ptrFinal){
+  // Eliminamos en bucle el primer nodo de la cola y evaluamos cuando tenemos solo un nodo en la cola para
+  // Elimiarlo y reasignar correctamente los punteros.
+  while (ptrCabecera != NULL) {
+    if ((ptrActual -> nodo_siguiente) == (ptrActual-> nodo_anterior)) { // Caso de un solo nodo
+      free(ptrActual);
+      ptrFinal = NULL;
+      ptrCabecera = NULL;
+      ptrActual = NULL;
+    }else{// Caso de borrar el primer elemento de la cola
+      ptrCabecera = ptrActual -> nodo_anterior;
+      ptrFinal = ptrCabecera;
+      ptrActual -> nodo_anterior -> nodo_siguiente = ptrFinal;
+      ptrActual -> nodo_siguiente -> nodo_anterior = ptrCabecera;
+      free(ptrActual);
+      ptrActual = ptrCabecera;
     }
-    else{
-        nodo *ptrAnterior = ptrCabecera;
-        ptrAnterior = ptrAnterior->nodo_anterior;
-        visualiza(ptrAnterior->nombre);//muestra un solo elemento de la lista
-        }
-      }
-
-nodo* borrar(nodo *nuevoNodo, nodo *ptrFinal ,nodo *ptrCabecera, nodo *ptrSiguiente){
-  if(ptrCabecera == NULL || ptrFinal == NULL){
-      printf("Cola vacia no se puede eliminar nada!!!!!!!!!!");
-  }else if(ptrSiguiente->nodo_anterior == ptrFinal){
-    ptrSiguiente -> nodo_siguiente->nodo_anterior = ptrFinal;
-    ptrFinal -> nodo_siguiente = ptrSiguiente -> nodo_siguiente -> nodo_anterior;
-    ptrCabecera = ptrFinal-> nodo_siguiente;
-    free(ptrSiguiente);
-  }else if(ptrSiguiente -> nodo_siguiente == ptrCabecera){
-    ptrSiguiente -> nodo_anterior -> nodo_siguiente = ptrCabecera;
-    ptrFinal = ptrSiguiente -> nodo_anterior;
-    ptrCabecera -> nodo_anterior = ptrSiguiente -> nodo_anterior -> nodo_siguiente;
-    free(nuevoNodo);
-  }else if(ptrSiguiente -> nodo_siguiente == ptrSiguiente -> nodo_anterior ){
-    free(nuevoNodo);
-    printf("Cola vacia!!");
-  }else if(ptrSiguiente -> nodo_anterior == ptrCabecera && ptrSiguiente -> nodo_anterior -> nodo_siguiente == ptrFinal){
-      ptrCabecera = ptrSiguiente -> nodo_anterior;
-      ptrFinal = ptrSiguiente ->nodo_siguiente;
-  }else{
-    ptrSiguiente -> nodo_anterior -> nodo_siguiente = ptrSiguiente -> nodo_siguiente;
-    ptrSiguiente -> nodo_siguiente ->nodo_anterior = ptrSiguiente -> nodo_anterior;
-    free(ptrSiguiente);
   }
 }
 
-void eliminarTodo(nodo *nuevoNodo, nodo *ptrFinal,nodo *ptrCabecera){
-  if(ptrCabecera == NULL){// excepcion
-      printf("\n========================\n Fichero de datos vacio\n========================\n");
-  }
-  else{
-      nodo *ptrSiguiente = ptrCabecera;
-      while(ptrSiguiente != NULL){
-          /*vamos a borrar siempre el primer nodo de la lista, y movemos el puntero siguiente hacia
-            el siguiente nodo de la lista, hacemos esto hasta que el el puntero siguiente sea null
-          */
-          ptrSiguiente = ptrSiguiente->nodo_siguiente;
-      }
-    }
-  }
+nodo* crearNodo(char *nombre){
+ nodo *nuevoNodo;
+ char *nombreImagen=(char *)malloc(sizeof(nombre));
+ strcpy(nombreImagen,nombre);
+ nuevoNodo=(nodo *)malloc(sizeof(nodo));
+return nuevoNodo;
+}
+void siguiente(nodo *ptrActual, nodo *ptrFinal, nodo *ptrCabecera){  
+    if(ptrActual == ptrFinal){
+        char A;
+        printf("Ultima foto\n");
+        printf("¿Desea Avanzar al primer elemento?");
+        printf("Y/N");
+        do{
+        scanf("%c", A);
+        if(A != 'Y' || A != 'N'){
+            printf("Introduzca un valor valido");
+        }else{
+            if(A == 'Y'){
+                ptrActual = ptrCabecera;
+            }else{
+                ptrActual = ptrFinal;
+            }
+        }
+        }while(A != 'Y' || A != 'N');
+    }else{
+        ptrActual = ptrActual->nodo_siguiente;
+    }     
+}
 
-  void error(const char *s)
-  {
-    perror (s);
-    exit(EXIT_FAILURE);
-  }
+void anterior(nodo *ptrActual, nodo *ptrFinal, nodo *ptrCabecera){  
+    if(ptrActual == ptrCabecera){
+        char A;
+        printf("Primera foto\n");
+        printf("¿Desea retroceder al ultimo elemento?");
+        printf("Y/N");
+        do{
+        scanf("%c", A);
+        if(A != 'Y' || A != 'N'){
+            printf("Introduzca un valor valido");
+        }else{
+            if(A == 'Y'){
+                ptrActual = ptrFinal;
+            }else{
+                ptrActual = ptrCabecera;
+            }
+        }
+        }while(A != 'Y' || A != 'N');
+    }else{
+        ptrActual = ptrActual->nodo_anterior;
+    }     
+}
+
+
+
