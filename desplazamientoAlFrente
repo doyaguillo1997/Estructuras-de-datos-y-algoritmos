@@ -1,0 +1,14 @@
+void desplazamientoAlFrente(nodo *ptrActual, nodo *ptrCabecera){
+      
+  if(ptrActual != ptrCabecera){
+   dato aux;   
+   aux = ptrActual ->datos;
+  
+   while((ptrActual != ptrCabecera)){
+            ptrActual = ptrActual->nodo_anterior;
+            ptrActual ->nodo_siguiente->datos = ptrActual->datos;         
+    }
+   ptrCabecera ->datos =  aux;//cuando finaliza el while es por que estamos en el putero cabecera
+    
+  }
+}
